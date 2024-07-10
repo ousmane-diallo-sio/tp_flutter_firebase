@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
 class Post extends Equatable {
-  final String? id;
+  String? id;
   final String title;
   final String description;
 
-  const Post({
+  Post({
     this.id,
     required this.title,
     required this.description,
@@ -13,6 +13,7 @@ class Post extends Equatable {
 
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
+      id: json['id'],
       title: json['title'],
       description: json['description'],
     );
@@ -20,6 +21,7 @@ class Post extends Equatable {
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
       'description': description,
     };

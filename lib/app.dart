@@ -1,34 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tp_flutter_firebase/domain/post/bloc/post_bloc.dart';
+import 'package:tp_flutter_firebase/domain/post/models/post.dart';
+import 'package:tp_flutter_firebase/domain/post/post_repository.dart';
+import 'package:tp_flutter_firebase/screens/post_creation_screen.dart';
+import 'package:tp_flutter_firebase/screens/post_detail_screen.dart';
 import 'package:tp_flutter_firebase/screens/post_list_screen.dart';
+import 'package:tp_flutter_firebase/screens/post_update_screen.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
-  // This widget is the root of your application.
+  final _postRepository = PostRepository();
+
+  final _router = GoRouter(
+    initialLocation: '/',
+    routes: [
+      GoRoute(
+        path: '/',
+        builder: (BuildContext context,
+            GoRouterState state) => const PostListScreen(),
+      ),
+      GoRoute(
+        path: '/detail',
+        builder: (BuildContext context,
+            GoRouterState state) {
+          final post = state.extra as Post;
+          return PostDetailScreen(post: post);
+        },
+      ),
+      GoRoute(
+        path: '/create',
+        builder: (BuildContext context, GoRouterState state) =>
+            PostCreationScreen(),
+      ),
+      GoRoute(
+        path: '/update',
+        builder: (BuildContext context, GoRouterState state) {
+          final post = state.extra as Post;
+          return PostUpdateScreen(post: post);
+        },
+      ),
+    ],
+  );
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return BlocProvider(
+      create: (context) => PostBloc(_postRepository),
+      child: MaterialApp.router(
+        routerConfig: _router,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
       ),
-      home: const PostListScreen(title: 'Flutter Demo Home Page'),
     );
   }
 }

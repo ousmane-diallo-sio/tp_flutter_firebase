@@ -21,6 +21,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     emit(state.copyWith(status: PostStatus.gettingPosts));
     try {
       final posts = await _postRepository.getAllPosts();
+
       emit(state.copyWith(
         status: PostStatus.gotPostsWithSuccess,
       ));
@@ -35,7 +36,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   void _onCreatePost(CreatePostEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostStatus.creatingPost));
     try {
-      final post = await _postRepository.createPost(event.post);
+      await _postRepository.createPost(event.post);
+      await Future.delayed(const Duration(seconds: 1));
+
       emit(state.copyWith(
         status: PostStatus.createdPostWithSuccess,
       ));
@@ -50,7 +53,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   void _onUpdatePost(UpdatePostEvent event, Emitter<PostState> emit) async {
     emit(state.copyWith(status: PostStatus.updatingPost));
     try {
-      final post = await _postRepository.updatePost(event.post);
+      await _postRepository.updatePost(event.post);
+      await Future.delayed(const Duration(seconds: 1));
+
       emit(state.copyWith(
         status: PostStatus.updatedPostWithSuccess,
       ));

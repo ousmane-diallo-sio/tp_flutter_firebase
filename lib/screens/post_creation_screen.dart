@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tp_flutter_firebase/domain/post/bloc/post_bloc.dart';
 import 'package:tp_flutter_firebase/domain/post/models/post.dart';
 
@@ -14,6 +15,10 @@ class PostCreationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Création de post'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -28,9 +33,16 @@ class PostCreationScreen extends StatelessWidget {
               decoration: const InputDecoration(labelText: 'Description'),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _submitPost(context),
-              child: const Text('Créer un post'),
+            BlocBuilder<PostBloc, PostState>(
+              builder: (context, state) {
+                if (state.status == PostStatus.creatingPost) {
+                  return const CircularProgressIndicator();
+                }
+                return ElevatedButton(
+                  onPressed: state.status == PostStatus.creatingPost ? null : () => _submitPost(context),
+                  child: const Text('Créer un post'),
+                );
+              },
             ),
           ],
         ),
